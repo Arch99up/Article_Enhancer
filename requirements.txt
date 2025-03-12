@@ -3,3 +3,4 @@ transformers==4.38.2
 openai==1.14.1
 torch==2.2.1
 gunicorn==22.0.0
+numpy==1.26.4
