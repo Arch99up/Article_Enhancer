@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Article Enhancer</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <h1>Article Enhancer</h1>
+    {% if error %}
+        <p style="color: red;">{{ error }}</p>
+    {% endif %}
+    <form method="POST">
+        <label for="api_key">OpenAI API Key:</label>
+        <input type="text" name="api_key" id="api_key" required>
+        <button type="submit">Generate Blog Posts & Download Selected</button>
+        <table>
+            <tr>
+                <th>Select</th>
+                <th>Title</th>
+                <th>Summary</th>
+                <th>Relevance Score</th>
+            </tr>
+            {% for article in articles %}
+            <tr>
+                <td><input type="checkbox" name="selected_articles" value="{{ article.link }}"></td>
+                <td>{{ article.title }}</td>
+                <td>{{ article.summary }}</td>
+                <td>{{ article.score|round(2) }}</td>
+            </tr>
+            {% endfor %}
+        </table>
+    </form>
+    <div class="usage">
+        <h2>Usage Stats</h2>
+        <p>Total Tokens Used: {{ usage_info.tokens }}</p>
+        <p>Estimated Cost: ${{ usage_info.cost|round(2) }} (based on gpt-3.5-turbo pricing)</p>
+    </div>
+</body>
+</html>
