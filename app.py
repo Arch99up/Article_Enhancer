@@ -9,10 +9,9 @@ import openai
 app = Flask(__name__)
 app.secret_key = os.getenv("FLASK_SECRET_KEY", "dev-secret-key")  # Needed for session
 
-# Zero-shot classifier
-classifier = pipeline("zero-shot-classification", model="facebook/bart-large-mnli")
-
 def score_articles(articles):
+    # Lazy-load the smaller DistilBERT model
+    classifier = pipeline("zero-shot-classification", model="distilbert-base-uncased")
     prompt = "This article is relevant to business users because it discusses a use case with practical value..."
     for article in articles:
         text = f"{article['title']} {article['summary']}"
@@ -29,7 +28,7 @@ def enhance_article(title, summary, link, api_key):
     Write a 500-800 word blog post inspired by this article, tailored for business users. Focus on the use case’s value, explaining who it benefits (e.g., specific roles like managers, IT teams, or industries like tech) and why they should care (e.g., efficiency gains, cost savings, strategic advantages). Use original phrasing and structure, avoiding direct copying, but include actionable insights or recommendations for adoption. Add a citation to the original article (e.g., "Inspired by '{title}' at {link}"). Do not reproduce the original text verbatim—create a fresh perspective.
     """
     response = openai.ChatCompletion.create(
-        model="gpt-3.5-turbo",  # Using gpt-3.5-turbo for cost savings
+        model="gpt-3.5-turbo",  # Cost-effective model
         messages=[{"role": "user", "content": prompt}],
         max_tokens=1500,        # Enough for 500-800 words
         temperature=0.7         # Balanced creativity
