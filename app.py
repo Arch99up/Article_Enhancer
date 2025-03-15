@@ -9,8 +9,15 @@ app = Flask(__name__)
 app.secret_key = os.getenv("FLASK_SECRET_KEY", "dev-secret-key")
 
 def enhance_article(title, summary, link, api_key):
-    # Initialize OpenAI client with no proxies
-    client = openai.OpenAI(api_key=api_key, http_client=None)  # Explicitly disable proxy handling
+    print("Enhance article called with api_key:", api_key)
+    print("Environment variables:", os.environ)
+    try:
+        # Initialize OpenAI client with minimal args
+        client = openai.OpenAI(api_key=api_key)
+        print("OpenAI client initialized successfully")
+    except Exception as e:
+        print("Error initializing OpenAI client:", str(e))
+        raise e
     prompt = f"""
     Given the following article title and summary:
     Title: {title}
