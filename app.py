@@ -9,28 +9,20 @@ app = Flask(__name__)
 app.secret_key = os.getenv("FLASK_SECRET_KEY", "dev-secret-key")
 
 def enhance_article(title, summary, link, api_key):
-    print("Enhance article called with api_key:", api_key)
-    print("Environment variables:", os.environ)
-    try:
-        # Initialize OpenAI client with minimal args
-        client = openai.OpenAI(api_key=api_key)
-        print("OpenAI client initialized successfully")
-    except Exception as e:
-        print("Error initializing OpenAI client:", str(e))
-        raise e
+    openai.api_key = api_key
     prompt = f"""
     Given the following article title and summary:
     Title: {title}
     Summary: {summary}
     Write a 500-800 word blog post inspired by this article, tailored for business users. Focus on the use case’s value, explaining who it benefits (e.g., specific roles like managers, IT teams, or industries like tech) and why they should care (e.g., efficiency gains, cost savings, strategic advantages). Use original phrasing and structure, avoiding direct copying, but include actionable insights or recommendations for adoption. Add a citation to the original article (e.g., "Inspired by '{title}' at {link}"). Do not reproduce the original text verbatim—create a fresh perspective.
     """
-    response = client.chat.completions.create(
+    response = openai.ChatCompletion.create(
         model="gpt-3.5-turbo",
         messages=[{"role": "user", "content": prompt}],
         max_tokens=1500,
         temperature=0.7
     )
-    return response.choices[0].message.content, response.usage.total_tokens
+    return response.choices[0].text, response.usage["total_tokens"]
 
 @app.route("/", methods=["GET", "POST"])
 def index():
