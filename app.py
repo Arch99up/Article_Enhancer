@@ -22,7 +22,8 @@ def enhance_article(title, summary, link, api_key):
         max_tokens=1500,
         temperature=0.7
     )
-    return response.choices[0].text, response.usage["total_tokens"]
+    # Use message['content'] instead of text for ChatCompletion
+    return response.choices[0].message["content"], response.usage["total_tokens"]
 
 @app.route("/", methods=["GET", "POST"])
 def index():
@@ -81,4 +82,4 @@ def index():
 
 if __name__ == "__main__":
     port = int(os.getenv("PORT", 5000))
-    app.run(host="0.0.0.0", port=port, debug=True)
+    app.run(host="0.0.0.0", port=port, debug=True)ue)
